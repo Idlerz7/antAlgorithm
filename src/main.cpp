@@ -7,6 +7,7 @@
 using namespace std;
 
 //函数声明
+void baseAntAlgorithm(Node* node, Ant* ants);
 
 //主函数
 int main()
@@ -14,6 +15,13 @@ int main()
 	//定义变量
 	Node nodes[NODE_NUM];
 	Ant ants[ANT_NUM];
+	baseAntAlgorithm(nodes, ants);
+	system("pause");
+	return 0;
+}
+
+void baseAntAlgorithm(Node* nodes, Ant* ants)
+{
 	double pheromone_matrix[NODE_NUM][NODE_NUM];
 	string bestPath;
 	double bestPathLength = INT_MAX;
@@ -22,11 +30,6 @@ int main()
 	srand((unsigned int)time(0));
 	for (int i = 0; i < NODE_NUM; i++)
 	{
-		//初始化蚂蚁起点
-		//ants[i].updateCurentNode(i);
-		//ants[i].updateTravelNode(i);
-		//ants[i].setStartNode(i);
-		//ants[i].updatePath(i);
 		//初始化节点(可能重复，待解决)
 		nodes[i].setCoordinate(rand() % 100, rand() % 100);
 	}
@@ -47,7 +50,14 @@ int main()
 		for (int antId = 0; antId < ANT_NUM; antId++)
 		{
 			//初始化蚂蚁
-			ants[antId].initiazation(antId);
+			if (antId < NODE_NUM)
+			{
+				ants[antId].initiazation(antId, false);
+			}
+			else
+			{
+				ants[antId].initiazation(rand() % NODE_NUM, true);
+			}
 			//每只蚂蚁开始干活
 			while (ants[antId].selectNextNode(nodes, pheromone_matrix) != -1);
 		}
@@ -58,7 +68,7 @@ int main()
 			for (int j = 0; j < NODE_NUM; j++)
 			{
 				//信息素挥发
-				pheromone_matrix[i][j] *= (1-VOLATILITY) ;
+				pheromone_matrix[i][j] *= (1 - VOLATILITY);
 			}
 		}
 		int from, to;
@@ -68,7 +78,7 @@ int main()
 		{
 			temp_path[antId] = ants[antId].getPath();
 			temp_length[antId] = ants[antId].getPathLength();
-			for (auto it = temp_path[antId].begin()+1; it != temp_path[antId].end(); it++)
+			for (auto it = temp_path[antId].begin() + 1; it != temp_path[antId].end(); it++)
 			{
 				//增加信息素
 				from = *(it - 1);
@@ -90,9 +100,7 @@ int main()
 		}
 	}
 
+	cout << "--baseAntAlgorithm--" << endl;
 	cout << "bestPath:" << bestPath << endl;
 	cout << "bestPathLengt:" << bestPathLength << endl;
-	system("pause");
-	return 0;
 }
-
