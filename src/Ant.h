@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <random>
+#include <map>
 #include "Node.h"
 #include "Param.h"
 
@@ -66,6 +67,7 @@ int Ant::selectNextNode(Node* nodes, double (*pheromone_matrix)[NODE_NUM])
 	//非随机选择的蚂蚁选择路径方法
 	double max_p = 0;
 	int selectNode;
+	std::map<int,double> roulette;	//定于轮盘，用于轮盘赌选择路径
 	
 	for (int targetNode = 0; targetNode < NODE_NUM; targetNode++)
 	{
@@ -86,13 +88,20 @@ int Ant::selectNextNode(Node* nodes, double (*pheromone_matrix)[NODE_NUM])
 			denominator += std::pow(pheromone_matrix[curentNode][nodeIndex], PHEROMONE_FACTOR)*std::pow(100/ nodes[curentNode].getDistance(nodes[nodeIndex]), HEURISTIC_FACTOR);
 		}
 		double curP = molecule / denominator;
-		if (curP > max_p)
+		roulette.insert({ targetNode,curP });
+	}
+	//轮盘赌选择下一轮节点
+	double randNum = rand() / (double)RAND_MAX;
+	double cumulativeProbability = 0;	//累计概率
+	for (auto iter = roulette.begin(); iter != roulette.end(); iter++)
+	{
+		cumulativeProbability += iter->second;
+		selectNode = iter->first;
+		if (cumulativeProbability >= randNum)
 		{
-			max_p = curP;
-			selectNode = targetNode;	//选择概率最大的
+			break;
 		}
 	}
-
 	//更新信息
 	this->updateTravelNode(selectNode);
 	this->path.push_back(selectNode);
