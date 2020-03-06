@@ -77,7 +77,7 @@ int Ant::selectNextNode(Node* nodes, double (*pheromone_matrix)[NODE_NUM])
 			continue;
 		}
 		//非随机选择的蚂蚁选择路径方法
-		double molecule = std::pow(pheromone_matrix[curentNode][targetNode],PHEROMONE_FACTOR)*std::pow(100/nodes[curentNode].getDistance(nodes[targetNode]),HEURISTIC_FACTOR);	//计算式的分子
+		double molecule = std::pow(pheromone_matrix[curentNode][targetNode],PHEROMONE_FACTOR)*std::pow(NORMAL_NUM/nodes[curentNode].getDistance(nodes[targetNode]),HEURISTIC_FACTOR);	//计算式的分子
 		double denominator = 0;	//计算式的分母
 		for (int nodeIndex = 0; nodeIndex < NODE_NUM; nodeIndex++)
 		{
@@ -85,7 +85,7 @@ int Ant::selectNextNode(Node* nodes, double (*pheromone_matrix)[NODE_NUM])
 			{
 				continue;
 			}
-			denominator += std::pow(pheromone_matrix[curentNode][nodeIndex], PHEROMONE_FACTOR)*std::pow(100/ nodes[curentNode].getDistance(nodes[nodeIndex]), HEURISTIC_FACTOR);
+			denominator += std::pow(pheromone_matrix[curentNode][nodeIndex], PHEROMONE_FACTOR)*std::pow(NORMAL_NUM/ nodes[curentNode].getDistance(nodes[nodeIndex]), HEURISTIC_FACTOR);
 		}
 		double curP = molecule / denominator;
 		roulette.insert({ targetNode,curP });
